@@ -1,0 +1,43 @@
+<main class="shell summary-shell">
+  <header class="session-header">
+    <div>
+      <p class="eyebrow">Year Summary</p>
+      <h1><%= @summary["title"] %></h1>
+    </div>
+    <div class="session-meta">
+      <span class="pill">Awaiting Orders</span>
+      <span class="pill"><%= @game_session.year_label %></span>
+    </div>
+  </header>
+
+  <section class="summary-grid">
+    <article class="panel summary-panel">
+      <h2>How The Year Landed</h2>
+      <p class="card-body"><%= @summary["headline"] %></p>
+
+      <ul class="summary-highlights">
+        <% Array(@summary["highlights"]).each do |highlight| %>
+          <li>
+            <strong><%= highlight["label"] %></strong>
+            <span class="<%= summary_delta_class(highlight["delta"]) %>"><%= summary_delta_label(highlight["delta"]) %></span>
+            <small><%= highlight["from"] %> to <%= highlight["to"] %></small>
+          </li>
+        <% end %>
+      </ul>
+
+      <%= button_to "Continue To Next Year", advance_game_session_path(@game_session), method: :post, class: "primary-button" %>
+    </article>
+
+    <aside class="panel">
+      <h2>Current State</h2>
+      <dl class="state-list">
+        <% Array(@summary["state_snapshot"]).each do |entry| %>
+          <div>
+            <dt><%= entry["label"] %></dt>
+            <dd><%= entry["value"] %></dd>
+          </div>
+        <% end %>
+      </dl>
+    </aside>
+  </section>
+</main>

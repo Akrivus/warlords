@@ -1,0 +1,100 @@
+<main class="shell game-shell">
+  <header class="session-header">
+    <div>
+      <p class="eyebrow">RomeBots</p>
+      <h1><%= @game_session.year_label %></h1>
+    </div>
+    <div class="session-meta">
+      <span class="pill"><%= @game_session.status.humanize %></span>
+      <span class="pill"><%= deck_progress_label(@game_session) %></span>
+    </div>
+  </header>
+
+  <% if flash[:alert].present? %>
+    <p class="flash-alert"><%= flash[:alert] %></p>
+  <% end %>
+
+  <section class="game-grid">
+    <article class="panel active-card-panel">
+      <% if @game_session.current_card.present? %>
+        <p class="card-slot">Card <%= @game_session.current_card.slot_index %> of <%= @game_session.deck_state["total_cards"] %></p>
+        <div class="speaker-strip">
+          <div class="portrait-placeholder">
+            <span>Portrait</span>
+            <strong><%= portrait_placeholder_label(@game_session.current_card) %></strong>
+          </div>
+          <div class="speaker-meta">
+            <p class="speaker-name"><%= @game_session.current_card.speaker_name.presence || "Unknown Speaker" %></p>
+            <% if speaker_faction_label(@game_session.current_card).present? %>
+              <p class="speaker-faction"><%= speaker_faction_label(@game_session.current_card) %></p>
+            <% end %>
+          </div>
+        </div>
+        <h2><%= @game_session.current_card.title %></h2>
+        <p class="card-body"><%= @game_session.current_card.body %></p>
+
+        <div class="response-list">
+          <%= button_to response_button_label("a", @game_session.current_card.response_a_text),
+              game_session_choices_path(@game_session, response_key: "a"),
+              method: :post,
+              class: "response-button response-a" %>
+
+          <%= button_to response_button_label("b", @game_session.current_card.response_b_text),
+              game_session_choices_path(@game_session, response_key: "b"),
+              method: :post,
+              class: "response-button response-b" %>
+        </div>
+      <% else %>
+        <p class="eyebrow">No Active Card</p>
+        <h2>The session is between states.</h2>
+        <p class="card-body">Use the summary or ending flow to continue from here.</p>
+      <% end %>
+    </article>
+
+    <aside class="panel state-panel">
+      <h2>State</h2>
+      <dl class="state-list">
+        <% visible_state_rows(@game_session).each do |label, value| %>
+          <div>
+            <dt><%= label %></dt>
+            <dd><%= value %></dd>
+          </div>
+        <% end %>
+      </dl>
+
+      <h3 class="subpanel-heading">Relationships</h3>
+      <dl class="state-list compact-state-list">
+        <% visible_relationship_rows(@game_session).each do |label, value| %>
+          <div>
+            <dt><%= label %></dt>
+            <dd><%= value %></dd>
+          </div>
+        <% end %>
+      </dl>
+
+      <h3 class="subpanel-heading">Faction Pressures</h3>
+      <dl class="state-list compact-state-list">
+        <% visible_faction_rows(@game_session).each do |label, value| %>
+          <div>
+            <dt><%= label %></dt>
+            <dd><%= value %></dd>
+          </div>
+        <% end %>
+      </dl>
+    </aside>
+
+    <aside class="panel log-panel">
+      <h2>Recent Events</h2>
+      <ul class="event-log">
+        <% @game_session.event_logs.limit(8).each do |event| %>
+          <li>
+            <strong><%= event.title %></strong>
+            <% if event.body.present? %>
+              <span><%= event.body %></span>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </aside>
+  </section>
+</main>

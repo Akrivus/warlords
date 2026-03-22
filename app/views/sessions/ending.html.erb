@@ -1,0 +1,32 @@
+<main class="shell summary-shell">
+  <header class="session-header">
+    <div>
+      <p class="eyebrow">Ending</p>
+      <h1><%= @end_state["title"] %></h1>
+    </div>
+    <div class="session-meta">
+      <span class="pill"><%= @game_session.status.humanize %></span>
+      <span class="pill">Year <%= @end_state["year"] %></span>
+    </div>
+  </header>
+
+  <section class="summary-grid">
+    <article class="panel summary-panel">
+      <h2>What Broke</h2>
+      <p class="card-body"><%= @end_state["body"] %></p>
+      <%= link_to "Start another run", root_path, class: "primary-link" %>
+    </article>
+
+    <aside class="panel">
+      <h2>Final State</h2>
+      <dl class="state-list">
+        <% visible_state_rows(@game_session).each do |label, value| %>
+          <div>
+            <dt><%= label %></dt>
+            <dd><%= value %></dd>
+          </div>
+        <% end %>
+      </dl>
+    </aside>
+  </section>
+</main>

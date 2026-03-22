@@ -1,0 +1,18 @@
+<main class="shell landing-shell">
+  <section class="hero-card">
+    <p class="eyebrow">Phase 1 Vertical Slice</p>
+    <h1>RomeBots</h1>
+    <p class="lede">
+      Start Octavian's first playable run: a year-one deck, authored cards, visible state shifts, and two-choice resolutions.
+    </p>
+
+    <%= button_to "Start A New Run", game_sessions_path(scenario_key: Scenarios::Romebots::Configuration::SCENARIO_KEY), class: "primary-button" %>
+
+    <% if @latest_session.present? %>
+      <p class="resume-link">
+        Latest session:
+        <%= link_to "resume run ##{@latest_session.id}", game_session_path(@latest_session) %>
+      </p>
+    <% end %>
+  </section>
+</main>
