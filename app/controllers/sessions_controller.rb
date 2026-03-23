@@ -15,14 +15,14 @@ class SessionsController < ApplicationController
     redirect_to summary_game_session_path(@game_session) and return if @game_session.summary?
     redirect_to ending_game_session_path(@game_session) and return if @game_session.end_state?
 
-    render_view("sessions/show") if Rails.env.test?
+    app_render("sessions/show")
   end
 
   def summary
     redirect_to destination_for(@game_session) and return unless @game_session.summary?
 
     @summary = @game_session.summary_data
-    render_view("sessions/summary") if Rails.env.test?
+    app_render("sessions/summary")
   end
 
   def advance
@@ -36,7 +36,7 @@ class SessionsController < ApplicationController
     redirect_to destination_for(@game_session) and return unless @game_session.end_state?
 
     @end_state = @game_session.end_state_data
-    render_view("sessions/ending") if Rails.env.test?
+    app_render("sessions/ending")
   end
 
   private

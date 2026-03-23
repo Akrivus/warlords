@@ -3,11 +3,7 @@
     <p class="eyebrow">Welcome Back</p>
     <h1>Sign In</h1>
 
-    <% if resource.errors.any? %>
-      <div class="flash flash-alert">
-        <%= resource.errors.full_messages.to_sentence %>
-      </div>
-    <% end %>
+    <%= app_partial "users/shared/error_messages", resource: resource %>
 
     <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "auth-form" }) do |form| %>
       <div class="field">
@@ -23,19 +19,7 @@
       <%= form.submit "Sign In", class: "primary-button" %>
     <% end %>
 
-    <div class="auth-divider">
-      <span>or continue with</span>
-    </div>
-
-    <div class="auth-actions auth-actions-stacked">
-      <% if oauth_provider_enabled?(:google_oauth2) %>
-        <%= button_to "Sign in with Google", "/users/auth/google_oauth2", method: :post, class: "secondary-button auth-provider-button", data: { turbo: false } %>
-      <% end %>
-
-      <% if oauth_provider_enabled?(:github) %>
-        <%= button_to "Sign in with GitHub", "/users/auth/github", method: :post, class: "secondary-button auth-provider-button", data: { turbo: false } %>
-      <% end %>
-    </div>
+    <%= app_partial "users/shared/oauth_links" %>
 
     <p class="resume-link">
       Need an account?

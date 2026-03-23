@@ -1,6 +1,8 @@
 require "digest"
 
 class ApplicationController < ActionController::Base
+  include ApplicationHelper
+
   # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
 
@@ -8,10 +10,6 @@ class ApplicationController < ActionController::Base
   helper_method :oauth_provider_enabled?
 
   private
-
-  def render_view(template_path)
-    render inline: File.read(Rails.root.join("app/views/#{template_path}.html.erb")), type: :erb, layout: false
-  end
 
   def authenticate_admin!
     authenticate_user!

@@ -16,7 +16,7 @@
   <% end %>
 
   <section class="game-grid">
-    <article class="panel active-card-panel">
+    <article class="panel hero-card">
       <% if @game_session.current_card.present? %>
         <% current_card = @game_session.current_card %>
         <% portrait_path = speaker_portrait_image_path(current_card) %>
@@ -66,34 +66,7 @@
     </article>
 
     <div class="sidebar-column">
-      <aside class="panel state-panel">
-        <h2>State</h2>
-        <div class="state-sections-grid">
-          <% state_presenter.sections.each do |section| %>
-            <section class="state-section state-section--<%= section.key %>">
-              <h3 class="subpanel-heading"><%= section.title %></h3>
-              <dl class="state-list <%= "compact-state-list" unless section.key == :core %>">
-                <% section.rows.each do |row| %>
-                  <div class="<%= row.css_classes %>">
-                    <dt>
-                      <span class="state-label-wrap">
-                        <span class="state-row-icon" aria-hidden="true"><%= row.icon_label %></span>
-                        <span class="state-row-label"><%= row.label %></span>
-                        <% if row.indicator_label.present? %>
-                          <span class="state-indicator state-indicator--<%= row.indicator_tone %>"><%= row.indicator_label %></span>
-                        <% end %>
-                      </span>
-                    </dt>
-                    <dd>
-                      <span class="state-row-value"><%= row.display_value %></span>
-                    </dd>
-                  </div>
-                <% end %>
-              </dl>
-            </section>
-          <% end %>
-        </div>
-      </aside>
+      <%= app_partial "sessions/state_panel", title: "State", state_presenter: state_presenter, panel_class: "state-panel" %>
 
       <aside class="panel log-panel">
         <h2>Recent Events</h2>

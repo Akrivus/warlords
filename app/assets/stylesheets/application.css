@@ -302,14 +302,14 @@ h3 {
 }
 
 .state-list {
-  margin: 1rem 0 0;
+  margin: 1rem -1.5rem 0;
 }
 
 .state-list div {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.55rem 0;
+  padding: 0.55rem 1.5rem;
   border-bottom: 1px solid rgba(215, 196, 166, 0.6);
 }
 
@@ -447,7 +447,7 @@ h3 {
 }
 
 .compact-state-list div {
-  padding: 0.45rem 0;
+  padding: 0.45rem -1.5rem;
 }
 
 .state-section:first-child .subpanel-heading {
@@ -617,6 +617,19 @@ h3 {
   .state-section--core {
     grid-column: 1 / -1;
   }
+
+  .state-section--factions {
+    margin-left: -1rem;
+  }
+
+  .state-section--relationships {
+    margin-right: -1rem;
+  }
+
+  .compact-state-list div {
+    padding: 0.45rem 1.5rem;
+    margin: 0 1rem;
+  }
 }
 
 @media (max-width: 800px) {
@@ -630,6 +643,7 @@ h3 {
   }
 
   .hero-card {
+    margin-bottom: 2rem;
     padding: 2rem;
   }
 

@@ -18,33 +18,6 @@
       <%= link_to "Start another run", root_path, class: "primary-link" %>
     </article>
 
-    <aside class="panel">
-      <h2>Final State</h2>
-      <div class="state-sections-grid">
-        <% state_presenter.sections.each do |section| %>
-          <section class="state-section state-section--<%= section.key %>">
-            <h3 class="subpanel-heading"><%= section.title %></h3>
-            <dl class="state-list <%= "compact-state-list" unless section.key == :core %>">
-              <% section.rows.each do |row| %>
-                <div class="<%= row.css_classes %>">
-                  <dt>
-                    <span class="state-label-wrap">
-                      <span class="state-row-icon" aria-hidden="true"><%= row.icon_label %></span>
-                      <span class="state-row-label"><%= row.label %></span>
-                      <% if row.indicator_label.present? %>
-                        <span class="state-indicator state-indicator--<%= row.indicator_tone %>"><%= row.indicator_label %></span>
-                      <% end %>
-                    </span>
-                  </dt>
-                  <dd>
-                    <span class="state-row-value"><%= row.display_value %></span>
-                  </dd>
-                </div>
-              <% end %>
-            </dl>
-          </section>
-        <% end %>
-      </div>
-    </aside>
+    <%= app_partial "sessions/state_panel", title: "Final State", state_presenter: state_presenter %>
   </section>
 </main>
