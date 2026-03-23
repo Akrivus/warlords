@@ -83,3 +83,29 @@ See:
 - `docs/ui_guidelines.md`
 - `docs/implementation_plan.md`
 - `docs/codex_instructions.md`
+
+## Authentication
+
+RomeBots supports:
+- email/password authentication through Devise
+- Google sign-in through Devise OmniAuth
+- GitHub sign-in through Devise OmniAuth
+
+Set these environment variables to enable SSO providers:
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `GITHUB_CLIENT_ID`
+- `GITHUB_CLIENT_SECRET`
+
+Development callback URLs:
+- `http://localhost:3000/users/auth/google_oauth2/callback`
+- `http://localhost:3000/users/auth/github/callback`
+
+Production should use the same callback paths on your real host.
+
+Current account matching behavior:
+- first match existing provider identities by `provider + uid`
+- otherwise match an existing `User` by provider email
+- if a matching user exists, link the provider to that user automatically
+- if no user exists, create one and link the provider
+- if the provider does not return an email, reject sign-in

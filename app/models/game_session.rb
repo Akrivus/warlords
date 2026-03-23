@@ -1,10 +1,12 @@
 class GameSession < ApplicationRecord
   STATUSES = %w[active year_summary paused completed failed abandoned].freeze
 
+  belongs_to :user, optional: true
   belongs_to :current_card, class_name: "SessionCard", optional: true
   has_many :session_cards, -> { order(:cycle_number, :slot_index) }, dependent: :destroy
   has_many :event_logs, -> { order(occurred_at: :desc, id: :desc) }, dependent: :destroy
 
+  validates :user, presence: true, on: :create
   validates :scenario_key, presence: true
   validates :status, presence: true, inclusion: { in: STATUSES }
   validates :cycle_number, numericality: { greater_than: 0, only_integer: true }
@@ -17,7 +19,8 @@ class GameSession < ApplicationRecord
   end
 
   def year_label
-    "#{context_value('time.year')} BCE"
+    year = context_value('time.year')
+    "#{year.abs} #{year > 0 ? "CE" : "BCE"}"
   end
 
   def summary?

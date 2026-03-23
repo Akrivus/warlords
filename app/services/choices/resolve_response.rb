@@ -100,7 +100,7 @@ module Choices
         Logs::RecordEvent.call(
           game_session: game_session,
           event_type: "cycle_completed",
-          title: "Year #{game_session.context_value('time.year')} complete",
+          title: "Year #{game_session.year_label} complete",
           body: summary["headline"],
           payload: summary
         )

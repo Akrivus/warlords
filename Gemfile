@@ -57,6 +57,7 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+  gem "dotenv-rails"
 end
 
 group :test do
@@ -64,3 +65,9 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+gem "activeadmin", "= 4.0.0.beta22"
+gem "devise"
+gem "omniauth-github"
+gem "omniauth-google-oauth2"
+gem "omniauth-rails_csrf_protection"

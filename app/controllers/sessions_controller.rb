@@ -1,9 +1,11 @@
 class SessionsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_game_session, only: [:show, :summary, :advance, :ending]
 
   def create
     game_session = Sessions::StartRun.call(
-      scenario_key: params.fetch(:scenario_key, Scenarios::Romebots::Configuration::SCENARIO_KEY)
+      scenario_key: params.fetch(:scenario_key, Scenarios::Romebots::Configuration::SCENARIO_KEY),
+      user: current_user
     )
 
     redirect_to destination_for(game_session)
@@ -40,7 +42,11 @@ class SessionsController < ApplicationController
   private
 
   def set_game_session
-    @game_session = GameSession.includes(:current_card, :session_cards, :event_logs).find(params[:id])
+    @game_session = current_user.game_sessions.includes(
+      :event_logs,
+      :session_cards,
+      current_card: { card_definition: { portrait_upload_attachment: :blob } }
+    ).find(params[:id])
   end
 
   def destination_for(game_session)

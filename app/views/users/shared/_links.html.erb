@@ -1,0 +1,11 @@
+<div class="auth-actions auth-actions-stacked">
+  <% if controller_name != "sessions" %>
+    <%= link_to "Sign In", new_session_path(resource_name), class: "secondary-button auth-provider-button" %>
+  <% end %>
+
+  <% if devise_mapping.registerable? && controller_name != "registrations" %>
+    <%= link_to "Create Account", new_registration_path(resource_name), class: "secondary-button auth-provider-button" %>
+  <% end %>
+</div>
+
+<%= render "users/shared/oauth_links" %>

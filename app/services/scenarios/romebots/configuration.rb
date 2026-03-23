@@ -6,33 +6,54 @@ module Scenarios
       DECK_SIZE = 12
       SCENARIO_KEY = "romebots".freeze
 
-      VISIBLE_STATE_KEYS = %w[
-        state.legitimacy
-        state.treasury
-        state.public_order
-        state.military_support
-        state.senate_support
-        state.health
-        state.heir_pressure
-      ].freeze
+      DISPLAY_GROUPS = {
+        core: {
+          title: "Core State",
+          prefix: "state."
+        },
+        factions: {
+          title: "Faction Pressures",
+          prefix: "factions."
+        },
+        relationships: {
+          title: "Character Relationships",
+          prefix: "relations."
+        }
+      }.freeze
 
-      VISIBLE_RELATION_KEYS = %w[
-        relations.agrippa
-        relations.cicero
-        relations.antony
-        relations.plebs
-      ].freeze
+      DISPLAY_CONFIG = {
+        "state.legitimacy" => { group: :core, priority: 100, always_visible: true, severe_below: 35, icon: "LG" },
+        "state.health" => { group: :core, priority: 95, always_visible: true, severe_below: 35, icon: "HL" },
+        "state.military_support" => { group: :core, priority: 90, always_visible: true, severe_below: 30, icon: "MS" },
+        "state.treasury" => { group: :core, priority: 85, always_visible: true, severe_below: 25, icon: "TR" },
+        "state.public_order" => { group: :core, priority: 80, always_visible: true, severe_below: 35, icon: "PO" },
+        "state.senate_support" => { group: :core, priority: 70, always_visible: true, severe_below: 25, icon: "SN" },
+        "state.heir_pressure" => { group: :core, priority: 50, always_visible: true, severe_above: 70, icon: "HP" },
+        "relations.agrippa" => { group: :relationships, priority: 90, always_visible: true, icon: "AG" },
+        "relations.cicero" => { group: :relationships, priority: 80, always_visible: true, icon: "CI" },
+        "relations.antony" => { group: :relationships, priority: 100, always_visible: true, icon: "AN" },
+        "relations.plebs" => { group: :relationships, priority: 70, always_visible: true, icon: "PL" },
+        "factions.octavian_circle" => { group: :factions, priority: 100, always_visible: true, icon: "OC" },
+        "factions.senate_bloc" => { group: :factions, priority: 90, always_visible: true, icon: "SB" },
+        "factions.antonian_faction" => { group: :factions, priority: 95, always_visible: true, icon: "AF" },
+        "factions.julian_house" => { group: :factions, priority: 85, always_visible: true, icon: "JH" }
+      }.freeze
 
-      VISIBLE_FACTION_KEYS = %w[
-        factions.octavian_circle
-        factions.senate_bloc
-        factions.antonian_faction
-        factions.julian_house
-      ].freeze
+      VISIBLE_STATE_KEYS = DISPLAY_CONFIG.filter_map do |key, entry|
+        key if entry[:group] == :core && entry[:always_visible]
+      end.freeze
+
+      VISIBLE_RELATION_KEYS = DISPLAY_CONFIG.filter_map do |key, entry|
+        key if entry[:group] == :relationships && entry[:always_visible]
+      end.freeze
+
+      VISIBLE_FACTION_KEYS = DISPLAY_CONFIG.filter_map do |key, entry|
+        key if entry[:group] == :factions && entry[:always_visible]
+      end.freeze
 
       def initial_context
         {
-          "time.year" => 44,
+          "time.year" => -44,
           "time.cycle_number" => 1,
           "time.cards_resolved_this_year" => 0,
           "state.legitimacy" => 55,

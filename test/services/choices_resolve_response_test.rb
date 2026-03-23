@@ -4,7 +4,10 @@ class ChoicesResolveResponseTest < ActiveSupport::TestCase
   setup do
     reset_game_data!
     load Rails.root.join("db/seeds.rb")
-    @session = Sessions::StartRun.call(scenario_key: "romebots")
+    UserIdentity.delete_all
+    User.delete_all
+    @user = create_user(email: "player_one@example.com")
+    @session = Sessions::StartRun.call(scenario_key: "romebots", user: @user)
   end
 
   test "resolves a response, mutates context, and advances to the next card" do
@@ -120,7 +123,7 @@ class ChoicesResolveResponseTest < ActiveSupport::TestCase
       )
     end
 
-    custom_session = Sessions::StartRun.call(scenario_key: "romebots")
+    custom_session = Sessions::StartRun.call(scenario_key: "romebots", user: @user)
     custom_session.reload
     assert_equal source_card.id, custom_session.current_card.card_definition_id
     refute custom_session.session_cards.where(card_definition_id: follow_up_card.id).exists?

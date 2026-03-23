@@ -6,7 +6,14 @@
       Start Octavian's first playable run: a year-one deck, authored cards, visible state shifts, and two-choice resolutions.
     </p>
 
-    <%= button_to "Start A New Run", game_sessions_path(scenario_key: Scenarios::Romebots::Configuration::SCENARIO_KEY), class: "primary-button" %>
+    <% if user_signed_in? %>
+      <%= button_to "Start A New Run", game_sessions_path(scenario_key: Scenarios::Romebots::Configuration::SCENARIO_KEY), class: "primary-button" %>
+    <% else %>
+      <div class="auth-actions">
+        <%= link_to "Sign In", new_user_session_path, class: "primary-button" %>
+        <%= link_to "Create Account", new_user_registration_path, class: "secondary-button" %>
+      </div>
+    <% end %>
 
     <% if @latest_session.present? %>
       <p class="resume-link">

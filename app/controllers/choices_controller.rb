@@ -1,6 +1,8 @@
 class ChoicesController < ApplicationController
+  before_action :authenticate_user!
+
   def create
-    game_session = GameSession.find(params[:game_session_id])
+    game_session = current_user.game_sessions.find(params[:game_session_id])
     Choices::ResolveResponse.call(game_session: game_session, response_key: params[:response_key])
 
     redirect_to destination_for(game_session.reload), status: :see_other

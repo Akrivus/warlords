@@ -24,6 +24,30 @@
   </head>
 
   <body>
+    <header class="app-bar">
+      <nav class="app-bar-nav">
+        <%= link_to "RomeBots", root_path, class: "app-bar-brand" %>
+
+        <div class="app-bar-actions">
+          <% if user_signed_in? %>
+            <span><%= current_user.email %></span>
+            <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "secondary-button" %>
+          <% else %>
+            <%= link_to "Sign In", new_user_session_path, class: "secondary-button" %>
+            <%= link_to "Create Account", new_user_registration_path, class: "secondary-button" %>
+          <% end %>
+        </div>
+      </nav>
+    </header>
+
+    <% if notice.present? %>
+      <p class="flash flash-notice"><%= notice %></p>
+    <% end %>
+
+    <% if alert.present? %>
+      <p class="flash flash-alert"><%= alert %></p>
+    <% end %>
+
     <%= yield %>
   </body>
 </html>

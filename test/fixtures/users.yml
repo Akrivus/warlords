@@ -1,0 +1,8 @@
+player_one:
+  email: player_one@example.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
+
+player_two:
+  email: player_two@example.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
+# column: value

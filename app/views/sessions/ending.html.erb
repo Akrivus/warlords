@@ -1,4 +1,5 @@
 <main class="shell summary-shell">
+  <% state_presenter = visible_state_presenter(@game_session) %>
   <header class="session-header">
     <div>
       <p class="eyebrow">Ending</p>
@@ -19,14 +20,31 @@
 
     <aside class="panel">
       <h2>Final State</h2>
-      <dl class="state-list">
-        <% visible_state_rows(@game_session).each do |label, value| %>
-          <div>
-            <dt><%= label %></dt>
-            <dd><%= value %></dd>
-          </div>
+      <div class="state-sections-grid">
+        <% state_presenter.sections.each do |section| %>
+          <section class="state-section state-section--<%= section.key %>">
+            <h3 class="subpanel-heading"><%= section.title %></h3>
+            <dl class="state-list <%= "compact-state-list" unless section.key == :core %>">
+              <% section.rows.each do |row| %>
+                <div class="<%= row.css_classes %>">
+                  <dt>
+                    <span class="state-label-wrap">
+                      <span class="state-row-icon" aria-hidden="true"><%= row.icon_label %></span>
+                      <span class="state-row-label"><%= row.label %></span>
+                      <% if row.indicator_label.present? %>
+                        <span class="state-indicator state-indicator--<%= row.indicator_tone %>"><%= row.indicator_label %></span>
+                      <% end %>
+                    </span>
+                  </dt>
+                  <dd>
+                    <span class="state-row-value"><%= row.display_value %></span>
+                  </dd>
+                </div>
+              <% end %>
+            </dl>
+          </section>
         <% end %>
-      </dl>
+      </div>
     </aside>
   </section>
 </main>

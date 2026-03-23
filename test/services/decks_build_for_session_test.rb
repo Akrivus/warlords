@@ -4,10 +4,14 @@ class DecksBuildForSessionTest < ActiveSupport::TestCase
   setup do
     reset_game_data!
     load Rails.root.join("db/seeds.rb")
+    UserIdentity.delete_all
+    User.delete_all
+    @user = create_user(email: "player_one@example.com")
   end
 
   test "builds a 12 card deck and snapshots the first card" do
     session = GameSession.create!(
+      user: @user,
       scenario_key: "romebots",
       status: "active",
       cycle_number: 1,
@@ -31,6 +35,7 @@ class DecksBuildForSessionTest < ActiveSupport::TestCase
 
   test "session cards preserve speaker metadata even if the definition later changes" do
     session = GameSession.create!(
+      user: @user,
       scenario_key: "romebots",
       status: "active",
       cycle_number: 1,

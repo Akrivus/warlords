@@ -98,7 +98,7 @@ module Decks
     end
 
     def historical_year
-      -game_session.context_value("time.year").to_i
+      game_session.context_value("time.year").to_i
     end
 
     def activate_next_card!
@@ -126,7 +126,7 @@ module Decks
       Logs::RecordEvent.call(
         game_session: game_session,
         event_type: "cycle_started",
-        title: "Year #{game_session.context_value('time.year')} begins",
+        title: "Year #{game_session.year_label} begins",
         body: "A new RomeBots year opens with #{game_session.deck_state['total_cards']} cards."
       )
       Logs::RecordEvent.call(

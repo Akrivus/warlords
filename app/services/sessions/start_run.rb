@@ -4,8 +4,9 @@ module Sessions
       new(...).call
     end
 
-    def initialize(scenario_key:)
+    def initialize(scenario_key:, user:)
       @scenario_key = scenario_key
+      @user = user
     end
 
     def call
@@ -13,6 +14,7 @@ module Sessions
 
       ActiveRecord::Base.transaction do
         game_session = GameSession.create!(
+          user: user,
           scenario_key: scenario_key,
           status: "active",
           cycle_number: 1,
@@ -36,6 +38,6 @@ module Sessions
 
     private
 
-    attr_reader :scenario_key
+    attr_reader :scenario_key, :user
   end
 end

@@ -1,0 +1,45 @@
+<main class="shell landing-shell">
+  <section class="hero-card auth-card">
+    <p class="eyebrow">Welcome Back</p>
+    <h1>Sign In</h1>
+
+    <% if resource.errors.any? %>
+      <div class="flash flash-alert">
+        <%= resource.errors.full_messages.to_sentence %>
+      </div>
+    <% end %>
+
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "auth-form" }) do |form| %>
+      <div class="field">
+        <%= form.label :email %>
+        <%= form.email_field :email, autofocus: true, autocomplete: "email" %>
+      </div>
+
+      <div class="field">
+        <%= form.label :password %>
+        <%= form.password_field :password, autocomplete: "current-password" %>
+      </div>
+
+      <%= form.submit "Sign In", class: "primary-button" %>
+    <% end %>
+
+    <div class="auth-divider">
+      <span>or continue with</span>
+    </div>
+
+    <div class="auth-actions auth-actions-stacked">
+      <% if oauth_provider_enabled?(:google_oauth2) %>
+        <%= button_to "Sign in with Google", "/users/auth/google_oauth2", method: :post, class: "secondary-button auth-provider-button", data: { turbo: false } %>
+      <% end %>
+
+      <% if oauth_provider_enabled?(:github) %>
+        <%= button_to "Sign in with GitHub", "/users/auth/github", method: :post, class: "secondary-button auth-provider-button", data: { turbo: false } %>
+      <% end %>
+    </div>
+
+    <p class="resume-link">
+      Need an account?
+      <%= link_to "Create one", new_user_registration_path %>
+    </p>
+  </section>
+</main>

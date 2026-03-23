@@ -1,4 +1,5 @@
 <main class="shell game-shell">
+  <% state_presenter = visible_state_presenter(@game_session) %>
   <header class="session-header">
     <div>
       <p class="eyebrow">RomeBots</p>
@@ -17,29 +18,42 @@
   <section class="game-grid">
     <article class="panel active-card-panel">
       <% if @game_session.current_card.present? %>
+        <% current_card = @game_session.current_card %>
+        <% portrait_path = speaker_portrait_image_path(current_card) %>
         <p class="card-slot">Card <%= @game_session.current_card.slot_index %> of <%= @game_session.deck_state["total_cards"] %></p>
         <div class="speaker-strip">
-          <div class="portrait-placeholder">
-            <span>Portrait</span>
-            <strong><%= portrait_placeholder_label(@game_session.current_card) %></strong>
-          </div>
-          <div class="speaker-meta">
-            <p class="speaker-name"><%= @game_session.current_card.speaker_name.presence || "Unknown Speaker" %></p>
-            <% if speaker_faction_label(@game_session.current_card).present? %>
-              <p class="speaker-faction"><%= speaker_faction_label(@game_session.current_card) %></p>
+          <div class="speaker-portrait <%= "speaker-portrait--placeholder" if portrait_path.blank? %>">
+            <% if portrait_path.present? %>
+              <%= image_tag portrait_path,
+                  alt: "#{current_card.speaker_name.presence || "Unknown speaker"} portrait",
+                  class: "speaker-portrait-image" %>
+            <% else %>
+              <span class="speaker-portrait-initials"><%= speaker_placeholder_initials(current_card) %></span>
+              <span class="speaker-portrait-caption"><%= portrait_placeholder_label(current_card) %></span>
             <% end %>
           </div>
+          <div class="speaker-meta">
+            <p class="speaker-name"><%= current_card.speaker_name.presence || "Unknown Speaker" %></p>
+            <div class="speaker-detail-row">
+              <% if speaker_type_label(current_card).present? %>
+                <span class="speaker-chip"><%= speaker_type_label(current_card) %></span>
+              <% end %>
+              <% if speaker_faction_label(current_card).present? %>
+                <span class="speaker-chip speaker-chip-faction"><%= speaker_faction_label(current_card) %></span>
+              <% end %>
+            </div>
+          </div>
         </div>
-        <h2><%= @game_session.current_card.title %></h2>
-        <p class="card-body"><%= @game_session.current_card.body %></p>
+        <h2><%= current_card.title %></h2>
+        <p class="card-body"><%= current_card.body %></p>
 
         <div class="response-list">
-          <%= button_to response_button_label("a", @game_session.current_card.response_a_text),
+          <%= button_to response_button_label("a", current_card.response_a_text),
               game_session_choices_path(@game_session, response_key: "a"),
               method: :post,
               class: "response-button response-a" %>
 
-          <%= button_to response_button_label("b", @game_session.current_card.response_b_text),
+          <%= button_to response_button_label("b", current_card.response_b_text),
               game_session_choices_path(@game_session, response_key: "b"),
               method: :post,
               class: "response-button response-b" %>
@@ -51,50 +65,51 @@
       <% end %>
     </article>
 
-    <aside class="panel state-panel">
-      <h2>State</h2>
-      <dl class="state-list">
-        <% visible_state_rows(@game_session).each do |label, value| %>
-          <div>
-            <dt><%= label %></dt>
-            <dd><%= value %></dd>
-          </div>
-        <% end %>
-      </dl>
+    <div class="sidebar-column">
+      <aside class="panel state-panel">
+        <h2>State</h2>
+        <div class="state-sections-grid">
+          <% state_presenter.sections.each do |section| %>
+            <section class="state-section state-section--<%= section.key %>">
+              <h3 class="subpanel-heading"><%= section.title %></h3>
+              <dl class="state-list <%= "compact-state-list" unless section.key == :core %>">
+                <% section.rows.each do |row| %>
+                  <div class="<%= row.css_classes %>">
+                    <dt>
+                      <span class="state-label-wrap">
+                        <span class="state-row-icon" aria-hidden="true"><%= row.icon_label %></span>
+                        <span class="state-row-label"><%= row.label %></span>
+                        <% if row.indicator_label.present? %>
+                          <span class="state-indicator state-indicator--<%= row.indicator_tone %>"><%= row.indicator_label %></span>
+                        <% end %>
+                      </span>
+                    </dt>
+                    <dd>
+                      <span class="state-row-value"><%= row.display_value %></span>
+                    </dd>
+                  </div>
+                <% end %>
+              </dl>
+            </section>
+          <% end %>
+        </div>
+      </aside>
 
-      <h3 class="subpanel-heading">Relationships</h3>
-      <dl class="state-list compact-state-list">
-        <% visible_relationship_rows(@game_session).each do |label, value| %>
-          <div>
-            <dt><%= label %></dt>
-            <dd><%= value %></dd>
-          </div>
-        <% end %>
-      </dl>
-
-      <h3 class="subpanel-heading">Faction Pressures</h3>
-      <dl class="state-list compact-state-list">
-        <% visible_faction_rows(@game_session).each do |label, value| %>
-          <div>
-            <dt><%= label %></dt>
-            <dd><%= value %></dd>
-          </div>
-        <% end %>
-      </dl>
-    </aside>
-
-    <aside class="panel log-panel">
-      <h2>Recent Events</h2>
-      <ul class="event-log">
-        <% @game_session.event_logs.limit(8).each do |event| %>
-          <li>
-            <strong><%= event.title %></strong>
-            <% if event.body.present? %>
-              <span><%= event.body %></span>
+      <aside class="panel log-panel">
+        <h2>Recent Events</h2>
+        <div class="event-log-scroll">
+          <ul class="event-log">
+            <% @game_session.event_logs.limit(8).each do |event| %>
+              <li>
+                <strong><%= event.title %></strong>
+                <% if event.body.present? %>
+                  <span><%= event.body %></span>
+                <% end %>
+              </li>
             <% end %>
-          </li>
-        <% end %>
-      </ul>
-    </aside>
+          </ul>
+        </div>
+      </aside>
+    </div>
   </section>
 </main>

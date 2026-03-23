@@ -12,7 +12,7 @@ module Scenarios
       def call
         {
           "year" => game_session.context_value("time.year"),
-          "title" => "Year #{game_session.context_value('time.year')} in review",
+          "title" => "Year #{game_session.year_label} in review",
           "headline" => headline,
           "highlights" => highlights,
           "state_snapshot" => state_snapshot
@@ -34,7 +34,7 @@ module Scenarios
       end
 
       def visible_deltas
-        Scenarios::Romebots::Configuration::VISIBLE_STATE_KEYS.filter_map do |key|
+        presenter.highlightable_keys.filter_map do |key|
           from = cycle_start_context[key]
           to = game_session.context_state[key]
           next if from.nil? || to.nil?
@@ -53,12 +53,7 @@ module Scenarios
       end
 
       def state_snapshot
-        Scenarios::Romebots::Configuration::VISIBLE_STATE_KEYS.map do |key|
-          {
-            "label" => key.split(".").last.humanize,
-            "value" => game_session.context_state[key]
-          }
-        end
+        presenter.state_snapshot
       end
 
       def headline
@@ -74,6 +69,10 @@ module Scenarios
 
       def fallback_headline
         "The year ends without dramatic swings, but the state remains delicately balanced."
+      end
+
+      def presenter
+        @presenter ||= Scenarios::Romebots::VisibleStatePresenter.new(game_session: game_session)
       end
     end
   end

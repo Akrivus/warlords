@@ -29,7 +29,7 @@ module Cycles
     def advance_cycle!
       previous_summary = game_session.summary_data
       next_context = game_session.context_state.deep_dup
-      next_context["time.year"] -= 1
+      next_context["time.year"] += 1
       next_context["time.cycle_number"] += 1
       next_context["time.cards_resolved_this_year"] = 0
 
