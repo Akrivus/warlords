@@ -4,7 +4,7 @@ class SessionsController < ApplicationController
 
   def create
     game_session = Sessions::StartRun.call(
-      scenario_key: params.fetch(:scenario_key, Scenarios::Romebots::Configuration::SCENARIO_KEY),
+      scenario_key: params.fetch(:scenario_key, Configuration::SCENARIO_KEY),
       user: current_user
     )
 

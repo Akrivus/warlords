@@ -44,7 +44,7 @@ module Context
     end
 
     def valid_context_key?(key)
-      Scenarios::Romebots::ContextSchema.valid_key?(key) || context_state.key?(key)
+      ContextSchema.valid_key?(key) || context_state.key?(key)
     end
 
     def normalize(key, value)

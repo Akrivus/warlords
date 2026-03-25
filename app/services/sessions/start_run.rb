@@ -10,7 +10,7 @@ module Sessions
     end
 
     def call
-      raise ArgumentError, "Unsupported scenario: #{scenario_key}" unless scenario_key == Scenarios::Romebots::Configuration::SCENARIO_KEY
+      raise ArgumentError, "Unsupported scenario: #{scenario_key}" unless scenario_key == Configuration::SCENARIO_KEY
 
       ActiveRecord::Base.transaction do
         game_session = GameSession.create!(
@@ -18,7 +18,7 @@ module Sessions
           scenario_key: scenario_key,
           status: "active",
           cycle_number: 1,
-          context_state: Scenarios::Romebots::Configuration.initial_context,
+          context_state: Configuration.initial_context,
           deck_state: {},
           seed: SecureRandom.hex(4),
           started_at: Time.current
@@ -41,3 +41,4 @@ module Sessions
     attr_reader :scenario_key, :user
   end
 end
+

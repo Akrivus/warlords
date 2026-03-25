@@ -15,16 +15,16 @@ module SessionsHelper
 
   def visible_state_presenter(game_session)
     @visible_state_presenters ||= {}
-    @visible_state_presenters[game_session.object_id] ||= Scenarios::Romebots::VisibleStatePresenter.new(game_session: game_session)
+    @visible_state_presenters[game_session.object_id] ||= State::VisibleStatePresenter.new(game_session: game_session)
   end
 
   def active_states_panel_presenter(game_session)
     @active_states_panel_presenters ||= {}
-    @active_states_panel_presenters[game_session.object_id] ||= Scenarios::Romebots::ActiveStatesPanelPresenter.new(game_session: game_session)
+    @active_states_panel_presenters[game_session.object_id] ||= State::PanelPresenter.new(game_session: game_session)
   end
 
   def chronicle_entries(game_session, include_system_events: false, include_state_events: false)
-    Scenarios::Romebots::ChronicleFeedBuilder.new(
+    Chronicle::FeedBuilder.new(
       game_session: game_session,
       include_system_events: include_system_events,
       include_state_events: include_state_events

@@ -43,7 +43,7 @@ module Decks
           )
         end
 
-        Scenarios::Romebots::ActiveStates::ProcessTurnStart.call(game_session: game_session)
+        State::ProcessTurnStart.call(game_session: game_session)
         activate_next_card!
         sync_deck_state!
         log_cycle_events
@@ -64,11 +64,11 @@ module Decks
       @selected_cards ||= begin
         eligible = CardDefinition.active.for_scenario(game_session.scenario_key).select { |card| eligible?(card) }
         ordered = eligible.sort_by { |card| [-effective_weight(card), card.key] }
-        selected = ordered.first(Scenarios::Romebots::Configuration::DECK_SIZE)
+        selected = ordered.first(Configuration::DECK_SIZE)
         repeatables = ordered.select { |card| repeatable_card?(card) }
 
         index = 0
-        while selected.count < Scenarios::Romebots::Configuration::DECK_SIZE && repeatables.any?
+        while selected.count < Configuration::DECK_SIZE && repeatables.any?
           selected << repeatables[index % repeatables.length]
           index += 1
         end
@@ -112,7 +112,7 @@ module Decks
 
     def state_weight_modifier(card_definition)
       game_session.session_states.sum do |state|
-        definition = Scenarios::Romebots::ActiveStateRegistry.fetch(state.state_key)
+        definition = State::Registry.fetch(state.state_key)
         Array(definition[:weight_modifiers]).sum do |modifier|
           next 0 unless modifier_matches_card?(modifier, card_definition)
 

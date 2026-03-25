@@ -80,7 +80,7 @@ module Choices
       next_card = preferred_next_card || game_session.session_cards.pending.where(cycle_number: game_session.cycle_number).order(:slot_index).first
 
       if next_card
-        Scenarios::Romebots::ActiveStates::ProcessTurnStart.call(game_session: game_session)
+        State::ProcessTurnStart.call(game_session: game_session)
 
         if (end_state = Sessions::CheckEndState.call(game_session: game_session))
           Sessions::ReachEndState.call(game_session: game_session, end_state: end_state, session_card: active_card)
@@ -99,8 +99,8 @@ module Choices
           session_card: next_card
         )
       else
-        Scenarios::Romebots::ActiveStates::ExpireForYearEnd.call(game_session: game_session)
-        summary = Scenarios::Romebots::YearSummary.call(game_session: game_session)
+        State::ExpireForYearEnd.call(game_session: game_session)
+        summary = Chronicle::YearSummary.call(game_session: game_session)
         game_session.update!(
           current_card: nil,
           status: "year_summary",

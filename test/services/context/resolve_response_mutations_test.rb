@@ -14,7 +14,7 @@ module Context
         response_a_states: [{ action: "add", key: "guard_mobilized", duration: { turns: 1 } }]
       )
 
-      result = ResolveResponseMutations.call(
+      result = Context::ResolveResponseMutations.call(
         game_session: session,
         session_card: session.current_card,
         response_key: "a"
@@ -32,7 +32,7 @@ module Context
       )
       starting_circle = session.context_state["factions.octavian_circle"]
 
-      ResolveResponseMutations.call(
+      Context::ResolveResponseMutations.call(
         game_session: session,
         session_card: session.current_card,
         response_key: "a"
@@ -41,7 +41,7 @@ module Context
 
       assert_equal starting_circle, session.context_state["factions.octavian_circle"]
 
-      Scenarios::Romebots::ActiveStates::ProcessTurnStart.call(game_session: session)
+      State::ProcessTurnStart.call(game_session: session)
       session.reload
 
       assert_equal starting_circle + 1, session.context_state["factions.octavian_circle"]

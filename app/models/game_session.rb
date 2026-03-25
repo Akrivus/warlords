@@ -54,7 +54,7 @@ class GameSession < ApplicationRecord
 
   def state_snapshot
     session_states.ordered.map do |state|
-      Scenarios::Romebots::ActiveStateRegistry.snapshot_for(state)
+      State::Registry.snapshot_for(state)
     end
   end
 end

@@ -12,7 +12,7 @@ module Context
 
     def call
       context_before = game_session.context_state.deep_dup
-      updated_context = ApplyMutations.call(
+      updated_context = Context::ApplyMutations.call(
         context_state: context_before,
         mutations: response_effects
       )
@@ -25,7 +25,7 @@ module Context
       updated_context["time.cards_resolved_this_year"] += 1
       game_session.update!(context_state: updated_context)
 
-      state_operation_summary = Scenarios::Romebots::ActiveStates::ApplyResponseOperations.call(
+      state_operation_summary = State::ApplyResponseOperations.call(
         game_session: game_session,
         session_card: session_card,
         response_key: response_key

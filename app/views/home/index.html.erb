@@ -7,7 +7,7 @@
     </p>
 
     <% if user_signed_in? %>
-      <%= button_to "Start A New Run", game_sessions_path(scenario_key: Scenarios::Romebots::Configuration::SCENARIO_KEY), class: "primary-button" %>
+      <%= button_to "Start A New Run", game_sessions_path(scenario_key: Configuration::SCENARIO_KEY), class: "primary-button" %>
     <% else %>
       <div class="auth-actions">
         <%= link_to "Sign In", new_user_session_path, class: "primary-button" %>
