@@ -29,7 +29,7 @@ module Context
       value = mutation["value"]
 
       raise ArgumentError, "Unsupported mutation op: #{operation}" unless VALID_OPERATIONS.include?(operation)
-      raise ArgumentError, "Unknown context key: #{key}" unless context_state.key?(key)
+      raise ArgumentError, "Unknown context key: #{key}" unless valid_context_key?(key)
 
       case operation
       when "set"
@@ -43,7 +43,13 @@ module Context
       end
     end
 
+    def valid_context_key?(key)
+      Scenarios::Romebots::ContextSchema.valid_key?(key) || context_state.key?(key)
+    end
+
     def normalize(key, value)
+      # For flags, "clear" is author-facing shorthand for setting false.
+      # It does not delete the key from context_state.
       return false if key.start_with?("flags.") && value.nil?
       return !!value if key.start_with?("flags.")
       return value.to_i.clamp(STATE_RANGE.min, STATE_RANGE.max) if key.start_with?("state.")

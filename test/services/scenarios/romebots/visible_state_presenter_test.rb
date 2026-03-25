@@ -60,10 +60,10 @@ module Scenarios
         current_card.update!(speaker_key: "agrippa", portrait_key: "agrippa")
         Logs::RecordEvent.call(
           game_session: @session,
-          event_type: "response_chosen",
+          event_type: "response_resolved",
           title: "Recent change",
           payload: {
-            "effects" => [
+            "immediate_effects" => [
               { "op" => "increment", "key" => "relations.agrippa", "value" => 2 }
             ]
           }
@@ -100,7 +100,7 @@ module Scenarios
         presenter = VisibleStatePresenter.new(game_session: @session)
         relationship_labels = presenter.sections.find { |section| section.key == :relationships }.rows.map(&:label)
 
-        assert_equal ["Agrippa", "Cicero", "Plebs", "Antony"], relationship_labels.first(4)
+        assert_equal ["Agrippa", "Cicero", "Legions", "Plebs"], relationship_labels.first(4)
       end
     end
   end

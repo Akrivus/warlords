@@ -191,7 +191,10 @@ module Scenarios
 
       def recent_effects
         @recent_effects ||= begin
-          effects = Array(latest_response_log&.payload&.dig("effects"))
+          effects = Array(
+            latest_response_log&.payload&.dig("immediate_effects") ||
+            latest_response_log&.payload&.dig("effects")
+          )
 
           effects.each_with_object({}) do |effect, memo|
             op = effect["op"] || effect[:op]
@@ -218,22 +221,19 @@ module Scenarios
       def latest_response_log
         @latest_response_log ||= begin
           loaded_logs = Array(game_session.event_logs)
-          loaded_logs.find { |event| event.event_type == "response_chosen" } ||
-            game_session.event_logs.where(event_type: "response_chosen").order(occurred_at: :desc, id: :desc).first
+          loaded_logs.find { |event| event.event_type == "response_resolved" } ||
+            loaded_logs.find { |event| event.event_type == "response_chosen" } ||
+            game_session.event_logs.where(event_type: ["response_resolved", "response_chosen"]).order(occurred_at: :desc, id: :desc).first
         end
       end
 
       def cycle_delta_for(key)
-        from = cycle_start_context[key]
+        from = cycle_snapshot.context_state[key]
         to = context_state[key]
         return unless from.is_a?(Numeric) && to.is_a?(Numeric)
 
         delta = to - from
         delta.zero? ? nil : delta
-      end
-
-      def cycle_start_context
-        game_session.deck_state["cycle_start_context"] || {}
       end
 
       def severe?(key)
@@ -272,6 +272,10 @@ module Scenarios
       def numeric_value(key)
         value = context_state[key]
         value.is_a?(Numeric) ? value : nil
+      end
+
+      def cycle_snapshot
+        @cycle_snapshot ||= CycleSnapshot.new(game_session: game_session)
       end
     end
   end

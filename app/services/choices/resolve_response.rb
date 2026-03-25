@@ -44,13 +44,14 @@ module Choices
     end
 
     def update_session_state!
-      updated_context = Context::ApplyMutations.call(
-        context_state: game_session.context_state,
-        mutations: response_effects
+      mutation_result = Context::ResolveResponseMutations.call(
+        game_session: game_session,
+        session_card: active_card,
+        response_key: response_key
       )
-      updated_context["time.cards_resolved_this_year"] += 1
-
-      game_session.update!(context_state: updated_context)
+      @context_before_resolution = mutation_result.fetch(:context_before)
+      @context_after_resolution = mutation_result.fetch(:context_after)
+      @state_operation_summary = mutation_result.fetch(:state_operation_summary)
     end
 
     def resolve_active_card!
@@ -62,10 +63,10 @@ module Choices
 
       Logs::RecordEvent.call(
         game_session: game_session,
-        event_type: "response_chosen",
-        title: "#{active_card.title}: option #{response_key.upcase}",
-        body: response_text,
-        payload: { "effects" => response_effects },
+        event_type: "response_resolved",
+        title: active_card.title,
+        body: response_log_text,
+        payload: chronicle_payload,
         session_card: active_card
       )
     end
@@ -79,6 +80,13 @@ module Choices
       next_card = preferred_next_card || game_session.session_cards.pending.where(cycle_number: game_session.cycle_number).order(:slot_index).first
 
       if next_card
+        Scenarios::Romebots::ActiveStates::ProcessTurnStart.call(game_session: game_session)
+
+        if (end_state = Sessions::CheckEndState.call(game_session: game_session))
+          Sessions::ReachEndState.call(game_session: game_session, end_state: end_state, session_card: active_card)
+          return
+        end
+
         game_session.update!(
           current_card: next_card,
           deck_state: refreshed_deck_state
@@ -91,6 +99,7 @@ module Choices
           session_card: next_card
         )
       else
+        Scenarios::Romebots::ActiveStates::ExpireForYearEnd.call(game_session: game_session)
         summary = Scenarios::Romebots::YearSummary.call(game_session: game_session)
         game_session.update!(
           current_card: nil,
@@ -99,7 +108,7 @@ module Choices
         )
         Logs::RecordEvent.call(
           game_session: game_session,
-          event_type: "cycle_completed",
+          event_type: "year_ended",
           title: "Year #{game_session.year_label} complete",
           body: summary["headline"],
           payload: summary
@@ -115,6 +124,48 @@ module Choices
         "resolved_cards" => cycle_cards.resolved.count,
         "pending_cards" => cycle_cards.pending.count
       }
+    end
+
+    def response_log_text
+      active_card.resolution_summary.presence || response_text
+    end
+
+    def chronicle_payload
+      {
+        "card_key" => active_card.card_definition&.key || active_card.metadata["card_key"],
+        "card_title" => active_card.title,
+        "card_body" => active_card.body,
+        "response_key" => response_key,
+        "response_text" => response_text,
+        "response_log" => response_log_text,
+        "immediate_effects" => Array(response_effects).map { |effect| effect.stringify_keys },
+        "context_changes" => context_changes,
+        "session_states_added" => Array(@state_operation_summary&.dig("session_states_added")),
+        "session_states_removed" => Array(@state_operation_summary&.dig("session_states_removed"))
+      }
+    end
+
+    def context_changes
+      before_context = @context_before_resolution || {}
+      after_context = @context_after_resolution || game_session.context_state
+
+      (before_context.keys | after_context.keys).filter_map do |key|
+        before_value = before_context[key]
+        after_value = after_context[key]
+        next if before_value == after_value
+
+        change = {
+          "key" => key,
+          "before" => before_value,
+          "after" => after_value
+        }
+
+        if before_value.is_a?(Numeric) && after_value.is_a?(Numeric)
+          change["delta"] = after_value - before_value
+        end
+
+        change
+      end
     end
   end
 end

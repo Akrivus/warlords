@@ -43,14 +43,6 @@ module Cycles
           "cycle_start_context" => next_context.deep_dup
         }
       )
-
-      Logs::RecordEvent.call(
-        game_session: game_session,
-        event_type: "cycle_advanced",
-        title: "Year #{game_session.context_value('time.year')} begins",
-        body: "The next RomeBots year opens and a fresh deck is drawn."
-      )
-
       Decks::BuildForSession.call(game_session: game_session)
     end
   end

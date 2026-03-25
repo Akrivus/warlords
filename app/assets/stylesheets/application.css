@@ -459,6 +459,65 @@ h3 {
   grid-template-rows: auto minmax(0, 1fr);
 }
 
+.active-state-list {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.active-state-item {
+  padding: 0.95rem 1rem;
+  border-radius: 18px;
+  border: 1px solid rgba(215, 196, 166, 0.85);
+  background: rgba(255, 248, 239, 0.72);
+}
+
+.active-state-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: start;
+}
+
+.active-state-header strong {
+  font-size: 1rem;
+}
+
+.active-state-duration,
+.active-state-tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.6rem;
+  padding: 0.12rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgba(125, 37, 24, 0.14);
+  background: rgba(255, 248, 239, 0.92);
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1.1;
+}
+
+.active-state-duration {
+  color: var(--accent-strong);
+  white-space: nowrap;
+}
+
+.active-state-description,
+.active-states-empty {
+  margin: 0.55rem 0 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.active-state-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.7rem;
+}
+
 .event-log-scroll {
   max-height: 22rem;
   overflow: auto;
@@ -685,5 +744,10 @@ h3 {
 
   .event-log-scroll {
     max-height: 16rem;
+  }
+
+  .active-state-header {
+    flex-direction: column;
+    align-items: stretch;
   }
 }

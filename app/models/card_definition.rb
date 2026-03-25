@@ -4,7 +4,9 @@ class CardDefinition < ApplicationRecord
     tags_json: { attribute: :tags, default: [] },
     spawn_rules_json: { attribute: :spawn_rules, default: {} },
     response_a_effects_json: { attribute: :response_a_effects, default: [] },
-    response_b_effects_json: { attribute: :response_b_effects, default: [] }
+    response_a_states_json: { attribute: :response_a_states, default: [] },
+    response_b_effects_json: { attribute: :response_b_effects, default: [] },
+    response_b_states_json: { attribute: :response_b_states, default: [] }
   }.freeze
 
   attr_accessor :remove_portrait_upload

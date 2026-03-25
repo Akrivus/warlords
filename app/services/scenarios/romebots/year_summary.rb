@@ -15,17 +15,14 @@ module Scenarios
           "title" => "Year #{game_session.year_label} in review",
           "headline" => headline,
           "highlights" => highlights,
-          "state_snapshot" => state_snapshot
+          "state_snapshot" => state_snapshot,
+          "chronicle" => chronicle
         }
       end
 
       private
 
       attr_reader :game_session
-
-      def cycle_start_context
-        game_session.deck_state["cycle_start_context"] || {}
-      end
 
       def highlights
         visible_deltas
@@ -35,7 +32,7 @@ module Scenarios
 
       def visible_deltas
         presenter.highlightable_keys.filter_map do |key|
-          from = cycle_start_context[key]
+          from = cycle_snapshot.context_state[key]
           to = game_session.context_state[key]
           next if from.nil? || to.nil?
 
@@ -56,6 +53,10 @@ module Scenarios
         presenter.state_snapshot
       end
 
+      def chronicle
+        Scenarios::Romebots::ActiveStates::ChronicleSnapshot.call(game_session: game_session)
+      end
+
       def headline
         strongest_gain = highlights.select { |delta| delta["delta"].positive? }.max_by { |delta| delta["delta"] }
         strongest_loss = highlights.select { |delta| delta["delta"].negative? }.min_by { |delta| delta["delta"] }
@@ -73,6 +74,10 @@ module Scenarios
 
       def presenter
         @presenter ||= Scenarios::Romebots::VisibleStatePresenter.new(game_session: game_session)
+      end
+
+      def cycle_snapshot
+        @cycle_snapshot ||= CycleSnapshot.new(game_session: game_session)
       end
     end
   end

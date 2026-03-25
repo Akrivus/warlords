@@ -134,4 +134,73 @@ class RomebotsFlowTest < ActionDispatch::IntegrationTest
     assert_select ".state-row-label", text: "Spy network"
     assert_select ".state-row-label", text: "Senate support", count: 0
   end
+
+  test "active states panel renders current active session states with runtime details" do
+    session = Sessions::StartRun.call(scenario_key: "romebots", user: @user)
+    CardDefinition.create!(
+      scenario_key: "romebots",
+      key: "intrigue_gate",
+      title: "Intrigue Gate",
+      body: "Requires an active state.",
+      speaker_type: "figure",
+      speaker_key: "envoy",
+      speaker_name: "Envoy",
+      portrait_key: "envoy",
+      faction_key: "test_faction",
+      card_type: "authored",
+      active: true,
+      weight: 5,
+      tags: ["intrigue"],
+      spawn_rules: { required_session_states: ["eastern_intrigue"] },
+      response_a_text: "A",
+      response_a_effects: [],
+      response_a_states: [],
+      response_b_text: "B",
+      response_b_effects: [],
+      response_b_states: []
+    )
+    session.session_states.create!(
+      state_key: "eastern_intrigue",
+      source_card_key: "opening",
+      source_response_key: "a",
+      applied_turn: 1,
+      applied_year: -44,
+      expires_turn: 4,
+      expires_year: -44,
+      metadata: {}
+    )
+    session.update!(context_state: session.context_state.merge("time.cards_resolved_this_year" => 1))
+
+    get game_session_path(session)
+
+    assert_response :success
+    assert_select "h2", "Active States"
+    assert_select ".active-state-header strong", text: "Eastern Intrigue"
+    assert_select ".active-state-description", text: /eastern Mediterranean/
+    assert_select ".active-state-duration", text: "3 turns left"
+    assert_select ".active-state-tag", text: "Turn effect"
+    assert_select ".active-state-tag", text: "Eligibility"
+    assert_select ".active-state-tag", text: "Weighting"
+  end
+
+  test "expired session states do not render in the active states panel" do
+    session = Sessions::StartRun.call(scenario_key: "romebots", user: @user)
+    session.session_states.create!(
+      state_key: "guard_mobilized",
+      source_card_key: "opening",
+      source_response_key: "a",
+      applied_turn: 0,
+      applied_year: -44,
+      expires_turn: 1,
+      expires_year: -44,
+      metadata: {}
+    )
+    session.update!(context_state: session.context_state.merge("time.cards_resolved_this_year" => 2))
+
+    get game_session_path(session)
+
+    assert_response :success
+    assert_select ".active-state-header strong", text: "Guard Mobilized", count: 0
+    assert_select ".active-states-empty", text: "No active states."
+  end
 end

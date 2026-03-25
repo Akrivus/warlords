@@ -5,6 +5,7 @@ class GameSession < ApplicationRecord
   belongs_to :current_card, class_name: "SessionCard", optional: true
   has_many :session_cards, -> { order(:cycle_number, :slot_index) }, dependent: :destroy
   has_many :event_logs, -> { order(occurred_at: :desc, id: :desc) }, dependent: :destroy
+  has_many :session_states, -> { order(:state_key, :id) }, dependent: :destroy
 
   validates :user, presence: true, on: :create
   validates :scenario_key, presence: true
@@ -49,5 +50,11 @@ class GameSession < ApplicationRecord
 
   def pending_cards_count
     session_cards.pending.count
+  end
+
+  def state_snapshot
+    session_states.ordered.map do |state|
+      Scenarios::Romebots::ActiveStateRegistry.snapshot_for(state)
+    end
   end
 end

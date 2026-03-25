@@ -29,6 +29,7 @@ module ActiveSupport
     # Add more helper methods to be used by all tests here...
     def reset_game_data!
       GameSession.update_all(current_card_id: nil)
+      SessionState.delete_all if ActiveRecord::Base.connection.data_source_exists?("session_states")
       EventLog.delete_all
       SessionCard.delete_all
       GameSession.delete_all

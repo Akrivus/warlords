@@ -1,5 +1,6 @@
 <main class="shell game-shell">
   <% state_presenter = visible_state_presenter(@game_session) %>
+  <% active_states_presenter = active_states_panel_presenter(@game_session) %>
   <header class="session-header">
     <div>
       <p class="eyebrow">RomeBots</p>
@@ -67,22 +68,8 @@
 
     <div class="sidebar-column">
       <%= app_partial "sessions/state_panel", title: "State", state_presenter: state_presenter, panel_class: "state-panel" %>
-
-      <aside class="panel log-panel">
-        <h2>Recent Events</h2>
-        <div class="event-log-scroll">
-          <ul class="event-log">
-            <% @game_session.event_logs.limit(8).each do |event| %>
-              <li>
-                <strong><%= event.title %></strong>
-                <% if event.body.present? %>
-                  <span><%= event.body %></span>
-                <% end %>
-              </li>
-            <% end %>
-          </ul>
-        </div>
-      </aside>
+      <%= app_partial "sessions/active_states_panel", active_states_presenter: active_states_presenter, panel_class: "active-states-panel" %>
+      <%= app_partial "sessions/event_log" %>
     </div>
   </section>
 </main>

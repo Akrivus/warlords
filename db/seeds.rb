@@ -19,6 +19,9 @@ romebots_cards = [
       { op: "increment", key: "relations.antony", value: -1 },
       { op: "increment", key: "factions.julian_house", value: 2 }
     ],
+    response_a_states: [
+      { action: "add", key: "mourning_period", duration: { until_year_end: true } }
+    ],
     response_b_text: "Accept the inheritance, but unveil it cautiously.",
     response_b_effects: [
       { op: "increment", key: "state.legitimacy", value: 5 },
@@ -26,6 +29,9 @@ romebots_cards = [
       { op: "increment", key: "state.public_order", value: 1 },
       { op: "increment", key: "factions.julian_house", value: 1 },
       { op: "increment", key: "factions.senate_bloc", value: 1 }
+    ],
+    response_b_states: [
+      { action: "add", key: "mourning_period", duration: { turns: 2 } }
     ]
   },
   {
@@ -142,6 +148,9 @@ romebots_cards = [
       { op: "increment", key: "state.military_support", value: 1 },
       { op: "increment", key: "factions.antonian_faction", value: -2 }
     ],
+    response_b_states: [
+      { action: "add", key: "eastern_intrigue", duration: { turns: 2 } }
+    ],
     response_b_follow_up_card_key: "a_narrow_escape"
   },
   {
@@ -172,6 +181,9 @@ romebots_cards = [
       { op: "increment", key: "state.public_order", value: -1 },
       { op: "increment", key: "relations.legions", value: -2 },
       { op: "increment", key: "factions.legions", value: -2 }
+    ],
+    response_b_states: [
+      { action: "add", key: "veteran_discontent", duration: { turns: 2 } }
     ]
   },
   {
@@ -195,6 +207,9 @@ romebots_cards = [
       { op: "increment", key: "relations.plebs", value: 1 },
       { op: "increment", key: "factions.senate_bloc", value: 1 }
     ],
+    response_a_states: [
+      { action: "remove", key: "grain_crisis" }
+    ],
     response_b_text: "Blame hoarders, save the treasury, and risk the crowd's mood.",
     response_b_effects: [
       { op: "increment", key: "state.public_order", value: 1 },
@@ -202,6 +217,10 @@ romebots_cards = [
       { op: "increment", key: "relations.cicero", value: -1 },
       { op: "increment", key: "relations.plebs", value: -1 },
       { op: "increment", key: "factions.antonian_faction", value: 1 }
+    ],
+    response_b_states: [
+      { action: "add", key: "grain_crisis", duration: { until_year_end: true } },
+      { action: "add", key: "whisper_campaign", duration: { until_year_end: true } }
     ],
     response_b_follow_up_card_key: "whisper_campaign"
   },
@@ -253,12 +272,18 @@ romebots_cards = [
       { op: "increment", key: "relations.antony", value: -1 },
       { op: "increment", key: "factions.antonian_faction", value: -1 }
     ],
+    response_a_states: [
+      { action: "remove", key: "whisper_campaign" }
+    ],
     response_b_text: "Trace the whisper network quietly and punish its paymasters.",
     response_b_effects: [
       { op: "increment", key: "state.public_order", value: 1 },
       { op: "increment", key: "relations.plebs", value: -1 },
       { op: "increment", key: "relations.antony", value: -1 },
       { op: "increment", key: "factions.antonian_faction", value: -2 }
+    ],
+    response_b_states: [
+      { action: "remove", key: "whisper_campaign" }
     ]
   },
   {
@@ -336,6 +361,9 @@ romebots_cards = [
       { op: "increment", key: "relations.agrippa", value: 1 },
       { op: "increment", key: "factions.octavian_circle", value: 1 }
     ],
+    response_a_states: [
+      { action: "add", key: "guard_mobilized", duration: { turns: 3 } }
+    ],
     response_b_text: "Wave Agrippa off and refuse to look hunted.",
     response_b_effects: [
       { op: "increment", key: "state.public_order", value: -2 },
@@ -343,12 +371,88 @@ romebots_cards = [
       { op: "increment", key: "relations.agrippa", value: -1 },
       { op: "increment", key: "factions.antonian_faction", value: 1 }
     ]
+  },
+  {
+    key: "letters_from_the_east",
+    title: "Letters From The East",
+    body: "Merchants, exiles, and ambitious princes all write at once. The eastern courts are not yet at war for your name, but they are already testing whether Rome's young claimant can be pulled into their bargains.",
+    card_type: "system",
+    speaker_type: "group",
+    speaker_key: "eastern_envoys",
+    speaker_name: "Eastern Envoys",
+    portrait_key: "eastern_envoys",
+    faction_key: "senatorial_families",
+    weight: 28,
+    tags: %w[east intrigue diplomacy trade],
+    spawn_rules: {
+      min_year: -43,
+      max_year: 14,
+      repeatable: true,
+      required_context: [
+        { key: "flags.returned_to_rome", equals: true }
+      ]
+    },
+    response_a_text: "Open the correspondence and keep eastern options alive.",
+    response_a_effects: [
+      { op: "increment", key: "state.senate_support", value: -1 },
+      { op: "increment", key: "state.legitimacy", value: 1 },
+      { op: "increment", key: "factions.octavian_circle", value: 1 }
+    ],
+    response_a_states: [
+      { action: "add", key: "eastern_intrigue", duration: { turns: 2 } }
+    ],
+    response_b_text: "File the letters away and keep Rome at the center of your attention.",
+    response_b_effects: [
+      { op: "increment", key: "state.public_order", value: 1 },
+      { op: "increment", key: "factions.senate_bloc", value: 1 }
+    ]
+  },
+  {
+    key: "eastern_petition",
+    title: "Eastern Petition",
+    body: "An embassy from the eastern client courts asks for arbitration, money, and the favor of a man they are not yet sure will matter next year. Their rivals are listening for every Roman hesitation.",
+    card_type: "system",
+    speaker_type: "group",
+    speaker_key: "eastern_envoys",
+    speaker_name: "Eastern Envoys",
+    portrait_key: "eastern_envoys",
+    faction_key: "senatorial_families",
+    weight: 26,
+    tags: %w[east intrigue court diplomacy],
+    spawn_rules: {
+      min_year: -43,
+      max_year: 14,
+      repeatable: true,
+      required_context: [
+        { key: "flags.returned_to_rome", equals: true }
+      ],
+      required_session_states: ["eastern_intrigue"]
+    },
+    response_a_text: "Intervene carefully and make the eastern courts remember your favor.",
+    response_a_effects: [
+      { op: "increment", key: "state.treasury", value: -3 },
+      { op: "increment", key: "state.legitimacy", value: 2 },
+      { op: "increment", key: "factions.octavian_circle", value: 1 }
+    ],
+    response_b_text: "Refuse the petition and let the eastern theater cool.",
+    response_b_effects: [
+      { op: "increment", key: "state.treasury", value: 1 },
+      { op: "increment", key: "state.senate_support", value: 1 }
+    ],
+    response_b_states: [
+      { action: "remove", key: "eastern_intrigue" }
+    ]
   }
 ]
 
 romebots_cards.each do |attributes|
   CardDefinition.upsert(
-    attributes.merge(active: true, scenario_key: "romebots", updated_at: Time.current, created_at: Time.current),
+    attributes.reverse_merge(response_a_states: [], response_b_states: []).merge(
+      active: true,
+      scenario_key: "romebots",
+      updated_at: Time.current,
+      created_at: Time.current
+    ),
     unique_by: [:scenario_key, :key]
   )
 end

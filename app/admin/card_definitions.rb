@@ -12,9 +12,11 @@ ActiveAdmin.register CardDefinition do
                 :spawn_rules_json,
                 :response_a_text,
                 :response_a_effects_json,
+                :response_a_states_json,
                 :response_a_follow_up_card_key,
                 :response_b_text,
                 :response_b_effects_json,
+                :response_b_states_json,
                 :response_b_follow_up_card_key,
                 :speaker_type,
                 :speaker_key,
@@ -70,6 +72,7 @@ ActiveAdmin.register CardDefinition do
       row(:spawn_rules) { |card| pre JSON.pretty_generate(card.spawn_rules || {}) }
       row :response_a_text
       row(:response_a_effects) { |card| pre JSON.pretty_generate(card.response_a_effects || []) }
+      row(:response_a_states) { |card| pre JSON.pretty_generate(card.response_a_states || []) }
       row :response_a_follow_up_card_key do |card|
         if card.response_a_follow_up_card.present?
           link_to(card.response_a_follow_up_card.title, resource_path(card.response_a_follow_up_card))
@@ -82,6 +85,7 @@ ActiveAdmin.register CardDefinition do
       end
       row :response_b_text
       row(:response_b_effects) { |card| pre JSON.pretty_generate(card.response_b_effects || []) }
+      row(:response_b_states) { |card| pre JSON.pretty_generate(card.response_b_states || []) }
       row :response_b_follow_up_card_key do |card|
         if card.response_b_follow_up_card.present?
           link_to(card.response_b_follow_up_card.title, resource_path(card.response_b_follow_up_card))
@@ -193,6 +197,11 @@ ActiveAdmin.register CardDefinition do
               label: "Response A Effects (JSON array)",
               input_html: { rows: 8 },
               hint: 'Example: [{"op":"increment","key":"state.legitimacy","value":3}]'
+      f.input :response_a_states_json,
+              as: :text,
+              label: "Response A States (JSON array)",
+              input_html: { rows: 8 },
+              hint: 'Example: [{"action":"add","key":"guard_mobilized","duration":{"turns":3}}]'
       f.input :response_a_follow_up_card_key,
               as: :select,
               collection: follow_up_options,
@@ -209,6 +218,11 @@ ActiveAdmin.register CardDefinition do
               label: "Response B Effects (JSON array)",
               input_html: { rows: 8 },
               hint: 'Example: [{"op":"set","key":"flags.married","value":true}]'
+      f.input :response_b_states_json,
+              as: :text,
+              label: "Response B States (JSON array)",
+              input_html: { rows: 8 },
+              hint: 'Example: [{"action":"remove","key":"whisper_campaign"}]'
       f.input :response_b_follow_up_card_key,
               as: :select,
               collection: follow_up_options,

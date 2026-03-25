@@ -26,6 +26,6 @@ class CyclesAdvanceTest < ActiveSupport::TestCase
     assert_equal 0, @session.context_state["time.cards_resolved_this_year"]
     assert_equal 12, @session.session_cards.where(cycle_number: 2).count
     assert_predicate @session.current_card, :present?
-    assert_includes @session.event_logs.limit(6).map(&:event_type), "cycle_advanced"
+    assert_includes @session.event_logs.limit(6).map(&:event_type), "year_started"
   end
 end

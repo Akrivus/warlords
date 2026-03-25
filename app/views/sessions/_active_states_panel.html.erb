@@ -1,0 +1,30 @@
+<% panel_classes = ["panel", local_assigns[:panel_class]].compact.join(" ") %>
+
+<aside class="<%= panel_classes %>">
+  <h2>Active States</h2>
+
+  <% if active_states_presenter.empty? %>
+    <p class="active-states-empty">No active states.</p>
+  <% else %>
+    <ul class="active-state-list">
+      <% active_states_presenter.entries.each do |entry| %>
+        <li class="active-state-item">
+          <div class="active-state-header">
+            <strong><%= entry.name %></strong>
+            <% if entry.duration_label.present? %>
+              <span class="active-state-duration"><%= entry.duration_label %></span>
+            <% end %>
+          </div>
+          <p class="active-state-description"><%= entry.description %></p>
+          <% if entry.behavior_tags.any? %>
+            <div class="active-state-tags">
+              <% entry.behavior_tags.each do |tag| %>
+                <span class="active-state-tag"><%= tag %></span>
+              <% end %>
+            </div>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</aside>

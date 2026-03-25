@@ -18,6 +18,19 @@ module SessionsHelper
     @visible_state_presenters[game_session.object_id] ||= Scenarios::Romebots::VisibleStatePresenter.new(game_session: game_session)
   end
 
+  def active_states_panel_presenter(game_session)
+    @active_states_panel_presenters ||= {}
+    @active_states_panel_presenters[game_session.object_id] ||= Scenarios::Romebots::ActiveStatesPanelPresenter.new(game_session: game_session)
+  end
+
+  def chronicle_entries(game_session, include_system_events: false, include_state_events: false)
+    Scenarios::Romebots::ChronicleFeedBuilder.new(
+      game_session: game_session,
+      include_system_events: include_system_events,
+      include_state_events: include_state_events
+    ).entries
+  end
+
   def deck_progress_label(game_session)
     resolved = game_session.deck_state["resolved_cards"] || 0
     total = game_session.deck_state["total_cards"] || 0

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_22_200106) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_23_080000) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -50,9 +50,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_200106) do
     t.string "portrait_key"
     t.json "response_a_effects", default: [], null: false
     t.string "response_a_follow_up_card_key"
+    t.json "response_a_states", default: [], null: false
     t.string "response_a_text", null: false
     t.json "response_b_effects", default: [], null: false
     t.string "response_b_follow_up_card_key"
+    t.json "response_b_states", default: [], null: false
     t.string "response_b_text", null: false
     t.string "scenario_key", null: false
     t.json "spawn_rules", default: {}, null: false
@@ -117,9 +119,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_200106) do
     t.text "resolution_summary"
     t.json "response_a_effects", default: [], null: false
     t.string "response_a_follow_up_card_key"
+    t.json "response_a_states", default: [], null: false
     t.string "response_a_text", null: false
     t.json "response_b_effects", default: [], null: false
     t.string "response_b_follow_up_card_key"
+    t.json "response_b_states", default: [], null: false
     t.string "response_b_text", null: false
     t.integer "slot_index", null: false
     t.string "source_type", default: "card_definition", null: false
@@ -133,6 +137,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_200106) do
     t.index ["game_session_id", "cycle_number", "slot_index"], name: "idx_on_game_session_id_cycle_number_slot_index_5bf5be4fb1", unique: true
     t.index ["game_session_id", "status"], name: "index_session_cards_on_game_session_id_and_status"
     t.index ["game_session_id"], name: "index_session_cards_on_game_session_id"
+  end
+
+  create_table "session_states", force: :cascade do |t|
+    t.integer "applied_turn", null: false
+    t.integer "applied_year", null: false
+    t.datetime "created_at", null: false
+    t.integer "expires_turn"
+    t.integer "expires_year"
+    t.integer "game_session_id", null: false
+    t.json "metadata", default: {}, null: false
+    t.string "source_card_key"
+    t.string "source_response_key"
+    t.string "state_key", null: false
+    t.datetime "updated_at", null: false
+    t.index ["game_session_id", "expires_year"], name: "idx_on_game_session_id_expires_year_802fd6fe5f"
+    t.index ["game_session_id", "state_key"], name: "index_session_states_on_game_session_id_and_state_key", unique: true
+    t.index ["game_session_id"], name: "index_session_states_on_game_session_id"
   end
 
   create_table "user_identities", force: :cascade do |t|
@@ -168,5 +189,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_200106) do
   add_foreign_key "game_sessions", "users"
   add_foreign_key "session_cards", "card_definitions"
   add_foreign_key "session_cards", "game_sessions"
+  add_foreign_key "session_states", "game_sessions"
   add_foreign_key "user_identities", "users"
 end
