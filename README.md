@@ -1,3 +1,5 @@
+**I created this over a weekend with AI, it's okay-ish but kinda rough in the human usability department.**
+
 # RomeBots
 
 RomeBots is a Rails-based browser game framework for card-driven narrative strategy games.
