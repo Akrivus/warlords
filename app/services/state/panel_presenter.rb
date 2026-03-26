@@ -4,6 +4,8 @@ module State
       :key,
       :name,
       :description,
+      :icon_key,
+      :icon_label,
       :duration_label,
       :behavior_tags,
       keyword_init: true
@@ -20,8 +22,10 @@ module State
 
         Entry.new(
           key: state.state_key,
-          name: definition[:name],
-          description: definition[:description],
+          name: state_label_for(state, definition),
+          description: state_description_for(definition),
+          icon_key: state_icon_key_for(definition),
+          icon_label: state_icon_label_for(state, definition),
           duration_label: duration_label_for(state),
           behavior_tags: behavior_tags_for(state, definition)
         )
@@ -41,7 +45,16 @@ module State
     end
 
     def definition_for(state)
-      Registry.fetch(state.state_key)
+      registry_definition = Registry.fetch(state.state_key)
+      database_definition = state_definitions_by_key[state.state_key.to_s]
+
+      {
+        name: database_definition&.label.presence || registry_definition[:name],
+        description: database_definition&.description.presence || registry_definition[:description],
+        icon: database_definition&.icon_asset_key.presence || registry_definition[:icon],
+        on_turn_start_effects: registry_definition[:on_turn_start_effects],
+        weight_modifiers: registry_definition[:weight_modifiers]
+      }
     rescue ArgumentError
       nil
     end
@@ -87,6 +100,39 @@ module State
 
     def current_year
       game_session.context_value("time.year").to_i
+    end
+
+    def state_label_for(state, definition)
+      definition[:name].presence || state.state_key.to_s.humanize
+    end
+
+    def state_description_for(definition)
+      definition[:description].presence || "This active state is currently affecting the session."
+    end
+
+    def state_icon_key_for(definition)
+      definition[:icon].to_s.strip.presence
+    end
+
+    def state_icon_label_for(state, definition)
+      source = definition[:name].presence || state.state_key.to_s.tr("_", " ")
+      tokens = source.scan(/[A-Za-z0-9]+/)
+      return "?" if tokens.empty?
+
+      initials = if tokens.one?
+        tokens.first.first(2)
+      else
+        tokens.first(2).map { |token| token.first }.join
+      end
+
+      initials.upcase
+    end
+
+    def state_definitions_by_key
+      @state_definitions_by_key ||= StateDefinition
+        .for_scenario(game_session.scenario_key)
+        .where(key: active_states.map(&:state_key))
+        .index_by(&:key)
     end
 
     def lifecycle

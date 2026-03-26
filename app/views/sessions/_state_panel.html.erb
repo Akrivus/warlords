@@ -14,7 +14,7 @@
                   <span class="state-row-icon" aria-hidden="true"><%= row.icon_label %></span>
                   <span class="state-row-label"><%= row.label %></span>
                   <% if row.indicator_label.present? %>
-                    <span class="state-indicator state-indicator--<%= row.indicator_tone %>"><%= row.indicator_label %></span>
+                    <%= render State::IndicatorBadgeComponent.new(label: row.indicator_label, tone: row.indicator_tone) %>
                   <% end %>
                 </span>
               </dt>

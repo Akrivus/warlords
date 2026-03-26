@@ -137,6 +137,18 @@ class RomebotsFlowTest < ActionDispatch::IntegrationTest
 
   test "active states panel renders current active session states with runtime details" do
     session = Sessions::StartRun.call(scenario_key: "romebots", user: @user)
+    StateDefinition.create!(
+      scenario_key: "romebots",
+      key: "eastern_intrigue",
+      label: "Eastern Intrigue",
+      description: "Diplomacy, trade, and court pressure from the eastern Mediterranean stay live.",
+      icon: "eastern_intrigue",
+      state_type: "modifier",
+      visibility: "public",
+      stacking_rule: "unique_refresh",
+      default_duration: {},
+      metadata: {}
+    )
     CardDefinition.create!(
       scenario_key: "romebots",
       key: "intrigue_gate",
@@ -175,6 +187,7 @@ class RomebotsFlowTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h2", "Active States"
+    assert_select "img.active-state-icon-image[src*='state_icons/eastern_intrigue']"
     assert_select ".active-state-header strong", text: "Eastern Intrigue"
     assert_select ".active-state-description", text: /eastern Mediterranean/
     assert_select ".active-state-duration", text: "3 turns left"
@@ -202,5 +215,38 @@ class RomebotsFlowTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select ".active-state-header strong", text: "Guard Mobilized", count: 0
     assert_select ".active-states-empty", text: "No active states."
+  end
+
+  test "active states panel falls back to a text badge when no matching state icon asset exists" do
+    session = Sessions::StartRun.call(scenario_key: "romebots", user: @user)
+    StateDefinition.create!(
+      scenario_key: "romebots",
+      key: "grain_crisis",
+      label: "Grain Crisis",
+      description: "Supplies are breaking down.",
+      icon: "missing_state_icon",
+      state_type: "modifier",
+      visibility: "public",
+      stacking_rule: "unique_refresh",
+      default_duration: {},
+      metadata: {}
+    )
+    session.session_states.create!(
+      state_key: "grain_crisis",
+      source_card_key: "opening",
+      source_response_key: "a",
+      applied_turn: 1,
+      applied_year: -44,
+      expires_turn: nil,
+      expires_year: -44,
+      metadata: {}
+    )
+    session.update!(context_state: session.context_state.merge("time.cards_resolved_this_year" => 1))
+
+    get game_session_path(session)
+
+    assert_response :success
+    assert_select ".active-state-icon--placeholder", count: 1
+    assert_select ".active-state-icon-label", text: "GC"
   end
 end

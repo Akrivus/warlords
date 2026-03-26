@@ -4,26 +4,7 @@
   <div class="event-log-scroll">
     <ul class="event-log">
       <% entries.each do |entry| %>
-        <li>
-          <strong><%= entry.title %></strong>
-          <% if entry.primary? && entry.card_body.present? %>
-            <span><%= truncate(entry.card_body, length: 140) %></span>
-          <% end %>
-          <% if entry.primary? && entry.response_text.present? %>
-            <span><%= entry.response_text %></span>
-          <% end %>
-          <% if entry.summary.present? %>
-            <span><%= entry.summary %></span>
-          <% end %>
-          <% if entry.visible_state_changes? %>
-            <% Array(entry.session_states_added).each do |state| %>
-              <span>State gained: <%= state["state_name"] || state["state_key"].to_s.humanize %></span>
-            <% end %>
-            <% Array(entry.session_states_removed).each do |state| %>
-              <span>State lost: <%= state["state_name"] || state["state_key"].to_s.humanize %></span>
-            <% end %>
-          <% end %>
-        </li>
+        <%= render Chronicle::EntryComponent.new(entry: entry) %>
       <% end %>
     </ul>
   </div>

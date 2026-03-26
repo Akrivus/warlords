@@ -35,6 +35,8 @@ module State
       entry = State::PanelPresenter.new(game_session: @session).entries.first
 
       assert_equal "3 turns left", entry.duration_label
+      assert_equal "guard_mobilized", entry.icon_key
+      assert_equal "GM", entry.icon_label
     end
 
     test "formats year-end duration text" do
@@ -110,6 +112,38 @@ module State
       presenter_keys = State::PanelPresenter.new(game_session: @session).entries.map(&:key).sort
 
       assert_equal expected_keys, presenter_keys
+    end
+
+    test "prefers icon metadata from state definitions when present" do
+      StateDefinition.create!(
+        scenario_key: "romebots",
+        key: "guard_mobilized",
+        label: "City Guard Mobilized",
+        description: "Trusted troops remain close.",
+        icon: "veteran_discontent",
+        state_type: "modifier",
+        visibility: "public",
+        stacking_rule: "unique_refresh",
+        default_duration: {},
+        metadata: {}
+      )
+
+      @session.session_states.create!(
+        state_key: "guard_mobilized",
+        source_card_key: "opening",
+        source_response_key: "a",
+        applied_turn: 1,
+        applied_year: -44,
+        expires_turn: 5,
+        expires_year: -44,
+        metadata: {}
+      )
+
+      entry = State::PanelPresenter.new(game_session: @session).entries.first
+
+      assert_equal "City Guard Mobilized", entry.name
+      assert_equal "veteran_discontent", entry.icon_key
+      assert_equal "CG", entry.icon_label
     end
   end
 end

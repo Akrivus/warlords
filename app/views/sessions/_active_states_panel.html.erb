@@ -9,11 +9,24 @@
     <ul class="active-state-list">
       <% active_states_presenter.entries.each do |entry| %>
         <li class="active-state-item">
-          <div class="active-state-header">
-            <strong><%= entry.name %></strong>
-            <% if entry.duration_label.present? %>
-              <span class="active-state-duration"><%= entry.duration_label %></span>
-            <% end %>
+          <% icon_path = state_icon_image_path(entry.icon_key) %>
+          <div class="active-state-topline">
+            <div class="active-state-icon <%= "active-state-icon--placeholder" if icon_path.blank? %>">
+              <% if icon_path.present? %>
+                <%= image_tag icon_path, alt: "", class: "active-state-icon-image" %>
+              <% else %>
+                <span class="active-state-icon-label"><%= entry.icon_label %></span>
+              <% end %>
+            </div>
+
+            <div class="active-state-body">
+              <div class="active-state-header">
+                <strong><%= entry.name %></strong>
+                <% if entry.duration_label.present? %>
+                  <span class="active-state-duration"><%= entry.duration_label %></span>
+                <% end %>
+              </div>
+            </div>
           </div>
           <p class="active-state-description"><%= entry.description %></p>
           <% if entry.behavior_tags.any? %>

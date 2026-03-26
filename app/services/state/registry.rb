@@ -7,6 +7,7 @@ module State
         key: "guard_mobilized",
         name: "Guard Mobilized",
         description: "Octavian keeps trusted men under arms and within reach.",
+        icon: "guard_mobilized",
         category: "military",
         default_duration: { turns: 3 },
         on_turn_start_effects: [
@@ -20,6 +21,7 @@ module State
         key: "whisper_campaign",
         name: "Whisper Campaign",
         description: "Rumors and insinuations spread through elite and street networks.",
+        icon: "whisper_campaign",
         category: "political",
         default_duration: { until_year_end: true },
         on_turn_start_effects: [
@@ -35,6 +37,7 @@ module State
         key: "grain_crisis",
         name: "Grain Crisis",
         description: "Short supplies turn every queue and marketplace into a threat.",
+        icon: "grain_crisis",
         category: "civic",
         default_duration: { until_year_end: true },
         on_turn_start_effects: [
@@ -48,6 +51,7 @@ module State
         key: "eastern_intrigue",
         name: "Eastern Intrigue",
         description: "Diplomacy, trade, and court pressure from the eastern Mediterranean stay live.",
+        icon: "eastern_intrigue",
         category: "diplomatic",
         default_duration: { turns: 2 },
         on_turn_start_effects: [
@@ -63,6 +67,7 @@ module State
         key: "mourning_period",
         name: "Mourning Period",
         description: "Public life slows under ritual grief and political symbolism.",
+        icon: "mourning_period",
         category: "ceremonial",
         default_duration: { until_year_end: true },
         on_turn_start_effects: [],
@@ -74,6 +79,7 @@ module State
         key: "veteran_discontent",
         name: "Veteran Discontent",
         description: "Caesar's old soldiers grow impatient with promises instead of payment.",
+        icon: "veteran_discontent",
         category: "military",
         default_duration: { turns: 2 },
         on_turn_start_effects: [

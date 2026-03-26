@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_23_080000) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_26_100000) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -154,6 +154,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_23_080000) do
     t.index ["game_session_id", "expires_year"], name: "idx_on_game_session_id_expires_year_802fd6fe5f"
     t.index ["game_session_id", "state_key"], name: "index_session_states_on_game_session_id_and_state_key", unique: true
     t.index ["game_session_id"], name: "index_session_states_on_game_session_id"
+  end
+
+  create_table "state_definitions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.json "default_duration", default: {}, null: false
+    t.text "description"
+    t.string "icon"
+    t.string "key", null: false
+    t.string "label", null: false
+    t.json "metadata", default: {}, null: false
+    t.string "scenario_key", null: false
+    t.string "stacking_rule", null: false
+    t.string "state_type", null: false
+    t.datetime "updated_at", null: false
+    t.string "visibility", null: false
+    t.index ["scenario_key", "key"], name: "index_state_definitions_on_scenario_key_and_key", unique: true
+    t.index ["scenario_key", "state_type"], name: "index_state_definitions_on_scenario_key_and_state_type"
   end
 
   create_table "user_identities", force: :cascade do |t|

@@ -48,6 +48,7 @@ ActiveAdmin.register CardDefinition do
     column :card_type
     column :title
     column :speaker_name
+    column :updated_at
     actions
   end
 

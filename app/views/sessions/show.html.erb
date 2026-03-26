@@ -17,54 +17,7 @@
   <% end %>
 
   <section class="game-grid">
-    <article class="panel hero-card">
-      <% if @game_session.current_card.present? %>
-        <% current_card = @game_session.current_card %>
-        <% portrait_path = speaker_portrait_image_path(current_card) %>
-        <p class="card-slot">Card <%= @game_session.current_card.slot_index %> of <%= @game_session.deck_state["total_cards"] %></p>
-        <div class="speaker-strip">
-          <div class="speaker-portrait <%= "speaker-portrait--placeholder" if portrait_path.blank? %>">
-            <% if portrait_path.present? %>
-              <%= image_tag portrait_path,
-                  alt: "#{current_card.speaker_name.presence || "Unknown speaker"} portrait",
-                  class: "speaker-portrait-image" %>
-            <% else %>
-              <span class="speaker-portrait-initials"><%= speaker_placeholder_initials(current_card) %></span>
-              <span class="speaker-portrait-caption"><%= portrait_placeholder_label(current_card) %></span>
-            <% end %>
-          </div>
-          <div class="speaker-meta">
-            <p class="speaker-name"><%= current_card.speaker_name.presence || "Unknown Speaker" %></p>
-            <div class="speaker-detail-row">
-              <% if speaker_type_label(current_card).present? %>
-                <span class="speaker-chip"><%= speaker_type_label(current_card) %></span>
-              <% end %>
-              <% if speaker_faction_label(current_card).present? %>
-                <span class="speaker-chip speaker-chip-faction"><%= speaker_faction_label(current_card) %></span>
-              <% end %>
-            </div>
-          </div>
-        </div>
-        <h2><%= current_card.title %></h2>
-        <p class="card-body"><%= current_card.body %></p>
-
-        <div class="response-list">
-          <%= button_to response_button_label("a", current_card.response_a_text),
-              game_session_choices_path(@game_session, response_key: "a"),
-              method: :post,
-              class: "response-button response-a" %>
-
-          <%= button_to response_button_label("b", current_card.response_b_text),
-              game_session_choices_path(@game_session, response_key: "b"),
-              method: :post,
-              class: "response-button response-b" %>
-        </div>
-      <% else %>
-        <p class="eyebrow">No Active Card</p>
-        <h2>The session is between states.</h2>
-        <p class="card-body">Use the summary or ending flow to continue from here.</p>
-      <% end %>
-    </article>
+    <%= render Sessions::CurrentCardComponent.new(game_session: @game_session, card: @game_session.current_card) %>
 
     <div class="sidebar-column">
       <%= app_partial "sessions/state_panel", title: "State", state_presenter: state_presenter, panel_class: "state-panel" %>
