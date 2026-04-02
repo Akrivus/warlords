@@ -72,4 +72,4 @@ gem "omniauth-github"
 gem "omniauth-google-oauth2"
 gem "omniauth-rails_csrf_protection"
 
-gem "view_component", "~> 4.5"
+gem "view_component", "~> 4.6"
